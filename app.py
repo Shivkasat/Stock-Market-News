@@ -18,6 +18,7 @@ import time
 import threading
 import queue
 import sys
+import os
 from io import StringIO
 
 app = Flask(__name__)
@@ -40,12 +41,13 @@ except Exception as e:
 # Initialize AI models
 try:
     sentiment_pipeline = pipeline("sentiment-analysis")
-    summarizer = pipeline("summarization", model="facebook/bart-large-cnn", device=0 if torch.cuda.is_available() else -1)
+    #summarizer = pipeline("summarization", model="facebook/bart-large-cnn", device=0 if torch.cuda.is_available() else -1)
     print("✅ AI models loaded successfully")
 except Exception as e:
-    print(f"❌ Model loading error: {e}")
+    print(f"Model loading error: {e}")
     sentiment_pipeline = None
     summarizer = None
+    
 
 # **ENHANCED SECTOR CONFIGURATION**
 ENHANCED_SECTOR_KEYWORDS = {
@@ -765,4 +767,6 @@ if __name__ == "__main__":
     print("🔧 Multi-threaded RSS processing")
     print("="*60)
     
-    app.run(debug=True, use_reloader=False, host='0.0.0.0', port=5000, threaded=True)
+    
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
